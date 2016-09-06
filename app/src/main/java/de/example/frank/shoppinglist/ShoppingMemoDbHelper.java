@@ -1,6 +1,7 @@
 package de.example.frank.shoppinglist;
 
 import android.content.Context;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -11,9 +12,22 @@ import android.util.Log;
 public class ShoppingMemoDbHelper extends SQLiteOpenHelper {
     private static final String LOG_TAG = ShoppingMemoDbHelper.class.getSimpleName();
 
-    public ShoppingMemoDbHelper(Context con){
-        super(con,"Platzhalter_DB_Name",null,1);
-        Log.d(LOG_TAG,"Helper hat die DB " + getDatabaseName() + " erzeugt");
+    // Datenbank, Version und Tabelle
+    public static final String DB_NAME = "shopping_list.db";
+    public static final int DB_VERSION = 1;
+    public static final String TABLE_SHOPPING_LIST = "shopping_list";
+
+    // Spalten
+    public static final String COLUMN_ID = "id";
+    public static final String COLUMN_PRODUCT = "product";
+    public static final String COLUMN_QUANTITY = "quantitiy";
+
+    public static final String SQL_CREATE = "CREATE TABLE " + TABLE_SHOPPING_LIST + "(" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            COLUMN_PRODUCT + " TEXT NOT NULL, " + COLUMN_QUANTITY + " INTEGER NOT NULL);";
+
+    public ShoppingMemoDbHelper(Context con) {
+        super(con, DB_NAME, null, 1);
+        Log.d(LOG_TAG, "Helper hat die DB " + getDatabaseName() + " erzeugt");
     }
 
     /**
@@ -24,6 +38,14 @@ public class ShoppingMemoDbHelper extends SQLiteOpenHelper {
      */
     @Override
     public void onCreate(SQLiteDatabase db) {
+
+        try {
+            Log.d(LOG_TAG, "Die Tabelle wird erstellt.");
+            db.execSQL(SQL_CREATE);
+        } catch (SQLException ex) {
+            Log.e(LOG_TAG, "Fehler beim Anlegen " + ex.getMessage());
+        }
+
 
     }
 
